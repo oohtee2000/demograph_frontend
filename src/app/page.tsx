@@ -1,103 +1,332 @@
-import Image from "next/image";
+// 'use client'
 
-export default function Home() {
+// import React, { useState, useEffect } from 'react';
+// import QuestionCard from '@/components/QuestionCard';
+// import EmailRegistration from '@/components/EmailRegistration';
+
+// type QuestionOption = {
+//   label: string;
+//   text: string;
+// };
+
+// type Question = {
+//   id: number;
+//   question_text: string;
+//   options: QuestionOption[];
+// };
+
+// const API_BASE = "https://demograph-backend.onrender.com/api";
+
+// const Index = () => {
+//   const [isRegistered, setIsRegistered] = useState(false);
+//   const [userEmail, setUserEmail] = useState<string | null>(null);
+//   const [userId, setUserId] = useState<number | null>(null);
+//   const [questions, setQuestions] = useState<Question[]>([]);
+//   const [loadingQuestions, setLoadingQuestions] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+
+//   const fetchQuestions = async () => {
+//     setLoadingQuestions(true);
+//     setError(null);
+//     try {
+//       const res = await fetch(`${API_BASE}/questions`);
+//       console.log('Fetch response status:', res.status);
+//       if (!res.ok) throw new Error("Failed to fetch questions");
+//       const data: Question[] = await res.json();
+//       console.log('Fetched questions:', data);
+//       setQuestions(data);
+//     } catch (err) {
+//       console.error(err);
+//       setError((err as Error).message);
+//     } finally {
+//       setLoadingQuestions(false);
+//     }
+//   };
+  
+
+
+//   const handleRegistrationComplete = async (email: string, country: string, state: string) => {
+//     const userData = {
+//       email,
+//       country,
+//       state,
+//       ip_address: "0.0.0.0", // Keep as before or get actual IP if you want
+//       device_id: null,
+//     };
+  
+//     try {
+//       const res = await fetch(`${API_BASE}/users`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(userData),
+//       });
+  
+//       if (res.status === 409) {
+//         alert("User already exists or IP already used.");
+//         return;
+//       }
+//       if (!res.ok) throw new Error("Registration failed");
+  
+//       const json = await res.json();
+//       setUserId(json.userId);
+//       setUserEmail(email);
+//       setIsRegistered(true);
+//       fetchQuestions();
+//     } catch (err) {
+//       alert((err as Error).message);
+//     }
+//   };
+  
+
+//   // Submit answer to backend
+//   const handleAnswerSubmit = async (questionId: number, answer: string) => {
+//     if (!userId) {
+//       alert("User not registered");
+//       return;
+//     }
+
+//     try {
+//       const res = await fetch(`${API_BASE}/answers`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({
+//           user_id: userId,
+//           question_id: questionId,
+//           answer_text: answer,
+//         }),
+//       });
+
+//       if (!res.ok) throw new Error("Failed to submit answer");
+
+//       alert("Answer submitted successfully!");
+//     } catch (err) {
+//       alert((err as Error).message);
+//     }
+//   };
+
+//   // If already registered, fetch questions on mount
+//   useEffect(() => {
+//     if (isRegistered) {
+//       fetchQuestions();
+//     }
+//   }, [isRegistered]);
+
+//   return (
+//     <div className="min-h-screen bg-gray-50 flex flex-col">
+//       <main className="flex-grow container mx-auto px-4 py-8">
+//         <div className="max-w-4xl mx-auto">
+//           <div className="text-center mb-8">
+//             <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+//               Welcome to QuestionVerse
+//             </h1>
+//             <p className="mt-4 text-lg text-gray-600">
+//               Answer questions and share your perspective with the community
+//             </p>
+//           </div>
+
+//           {!isRegistered ? (
+//             <div className="my-8">
+//               <EmailRegistration onRegistrationComplete={handleRegistrationComplete} />
+//             </div>
+//           ) : (
+//             <>
+//               <div className="bg-white p-4 rounded-lg shadow-sm mb-8">
+//                 <p className="text-sm text-gray-600">
+//                   Signed in as <span className="font-medium">{userEmail}</span>
+//                 </p>
+//               </div>
+
+//               {loadingQuestions && <p>Loading questions...</p>}
+//               {error && <p className="text-red-500">{error}</p>}
+
+//               <div className="space-y-6">
+//               {questions.map((question) => (
+//   <QuestionCard
+//     key={question.id}
+//     question={question}
+//     userId={userId!} // userId should be set if registered
+//     onSubmit={(answer) => handleAnswerSubmit(question.id, answer)} //error: Argument of type 'number' is not assignable to parameter of type 'string'.ts(2345)
+//   />
+// ))}
+
+//               </div>
+//             </>
+//           )}
+//         </div>
+//       </main>
+
+//       <footer className="bg-white border-t py-6">
+//         <div className="container mx-auto px-4 text-center text-sm text-gray-500">
+//           © {new Date().getFullYear()} QuestionVerse. All rights reserved.
+//         </div>
+//       </footer>
+//     </div>
+//   );
+// };
+
+// export default Index;
+
+'use client'
+
+import React, { useState, useEffect } from 'react';
+import QuestionCard from '@/components/QuestionCard';
+import EmailRegistration from '@/components/EmailRegistration';
+
+type QuestionOption = {
+  label: string;
+  text: string;
+};
+
+type Question = {
+  id: number;
+  question_text: string;
+  options: QuestionOption[];
+};
+
+const API_BASE = "https://demograph-backend.onrender.com/api";
+
+const Index = () => {
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loadingQuestions, setLoadingQuestions] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch questions from backend
+  const fetchQuestions = async () => {
+    setLoadingQuestions(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_BASE}/questions`);
+      console.log('Fetch response status:', res.status);
+      if (!res.ok) throw new Error("Failed to fetch questions");
+      const data: Question[] = await res.json();
+      console.log('Fetched questions:', data);
+      setQuestions(data);
+    } catch (err) {
+      console.error(err);
+      setError((err as Error).message);
+    } finally {
+      setLoadingQuestions(false);
+    }
+  };
+
+  const handleRegistrationComplete = async (email: string, country: string, state: string) => {
+    const userData = {
+      email,
+      country,
+      state,
+      ip_address: "0.0.0.0", // Keep as before or get actual IP if you want
+      device_id: null,
+    };
+  
+    try {
+      const res = await fetch(`${API_BASE}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+  
+      if (res.status === 409) {
+        alert("User already exists or IP already used.");
+        return;
+      }
+      if (!res.ok) throw new Error("Registration failed");
+  
+      const json = await res.json();
+      setUserId(json.userId);
+      setUserEmail(email);
+      setIsRegistered(true);
+      fetchQuestions();
+    } catch (err) {
+      alert((err as Error).message);
+    }
+  };
+  
+  // Submit answer to backend
+  const handleAnswerSubmit = async (questionId: number, answer: string) => {
+    if (!userId) {
+      alert("User not registered");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/answers`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          question_id: questionId,
+          answer_text: answer,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to submit answer");
+
+      alert("Answer submitted successfully!");
+    } catch (err) {
+      alert((err as Error).message);
+    }
+  };
+
+  // If already registered, fetch questions on mount
+  useEffect(() => {
+    if (isRegistered) {
+      fetchQuestions();
+    }
+  }, [isRegistered]);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+              Welcome to QuestionVerse
+            </h1>
+            <p className="mt-4 text-lg text-gray-600">
+              Answer questions and share your perspective with the community
+            </p>
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          {!isRegistered ? (
+            <div className="my-8">
+              <EmailRegistration onRegistrationComplete={handleRegistrationComplete} />
+            </div>
+          ) : (
+            <>
+              <div className="bg-white p-4 rounded-lg shadow-sm mb-8">
+                <p className="text-sm text-gray-600">
+                  Signed in as <span className="font-medium">{userEmail}</span>
+                </p>
+              </div>
+
+              {loadingQuestions && <p>Loading questions...</p>}
+              {error && <p className="text-red-500">{error}</p>}
+
+              <div className="space-y-6">
+                {questions.map((question) => (
+                  <QuestionCard
+                    key={question.id}
+                    question={question}
+                    userId={userId!} // userId should be set if registered
+                    onSubmit={handleAnswerSubmit} // Fixed here
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      <footer className="bg-white border-t py-6">
+        <div className="container mx-auto px-4 text-center text-sm text-gray-500">
+          © {new Date().getFullYear()} QuestionVerse. All rights reserved.
+        </div>
       </footer>
     </div>
   );
-}
+};
+
+export default Index;
